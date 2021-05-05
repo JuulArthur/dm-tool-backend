@@ -1,29 +1,11 @@
-#!/usr/bin/env node
+const app = require('../app');
+import http from 'http';
+const debug = require('debug')('dm-tool:server');
 
-/**
- * Module dependencies.
- */
-
-var app = require('../app');
-var debug = require('debug')('dm-tool:server');
-var http = require('http');
-
-/**
- * Get port from environment and store in Express.
- */
-
-var port = normalizePort(process.env.PORT || '3001');
+const port = normalizePort(process.env.PORT || '3001');
 app.set('port', port);
 
-/**
- * Create HTTP server.
- */
-
-var server = http.createServer(app);
-
-/**
- * Listen on provided port, on all network interfaces.
- */
+const server = http.createServer(app);
 
 server.listen(port, () => {
   console.log(`Listing on port: ${port}`)
@@ -31,12 +13,8 @@ server.listen(port, () => {
 server.on('error', onError);
 server.on('listening', onListening);
 
-/**
- * Normalize a port into a number, string, or false.
- */
-
-function normalizePort(val) {
-  var port = parseInt(val, 10);
+function normalizePort(val: string) {
+  const port = parseInt(val, 10);
 
   if (isNaN(port)) {
     // named pipe
@@ -51,11 +29,7 @@ function normalizePort(val) {
   return false;
 }
 
-/**
- * Event listener for HTTP server "error" event.
- */
-
-function onError(error) {
+function onError(error: any) {
   if (error.syscall !== 'listen') {
     throw error;
   }
@@ -78,10 +52,6 @@ function onError(error) {
       throw error;
   }
 }
-
-/**
- * Event listener for HTTP server "listening" event.
- */
 
 function onListening() {
   var addr = server.address();

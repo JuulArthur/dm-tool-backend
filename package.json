@@ -3,8 +3,23 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
-    "dev": "node ./bin/www"
+    "dev": "run-s clean tsc start",
+    "watch:dev": "nodemon",
+    "start": "node dist-server/bin/www NODE_ENV=developmen",
+    "clean": "rimraf dist-server",
+    "tsc": "tsc"
+  },
+  "nodemonConfig": {
+    "exec": "npm run dev",
+    "watch": [
+      "server/*",
+      "public/*"
+    ],
+    "ignore": [
+      "**/__tests__/**",
+      "*.test.js",
+      "node_modules/*"
+    ]
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -14,6 +29,19 @@
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
     "morgan": "~1.9.1",
-    "typescript": "^4.2.4"
+    "nodemon": "^2.0.7",
+    "pg": "^8.6.0",
+    "rimraf": "^3.0.2"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.2",
+    "@types/cors": "^2.8.10",
+    "@types/express": "^4.17.11",
+    "@types/http-errors": "^1.8.0",
+    "@types/morgan": "^1.9.2",
+    "@types/node": "^14.0.4",
+    "npm-run-all": "^4.1.5",
+    "tslint": "^5.12.1",
+    "typescript": "^3.3.3"
   }
 }
