@@ -7,7 +7,8 @@
     "watch:dev": "nodemon",
     "start": "node dist-server/bin/www NODE_ENV=developmen",
     "clean": "rimraf dist-server",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "db": "APP_DB_NAME=dmtool sh ./setupdb.sh"
   },
   "nodemonConfig": {
     "exec": "npm run dev",
@@ -19,7 +20,11 @@
       "**/__tests__/**",
       "*.test.js",
       "node_modules/*"
-    ]
+    ],
+    "execMap": {
+      "ts": "node -r ts-node/register"
+    },
+    "ext": "js, json, ts"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -31,6 +36,7 @@
     "morgan": "~1.9.1",
     "nodemon": "^2.0.7",
     "pg": "^8.6.0",
+    "pg-connection-string": "^2.5.0",
     "rimraf": "^3.0.2"
   },
   "devDependencies": {
@@ -40,6 +46,7 @@
     "@types/http-errors": "^1.8.0",
     "@types/morgan": "^1.9.2",
     "@types/node": "^14.0.4",
+    "@types/pg": "^7.14.11",
     "npm-run-all": "^4.1.5",
     "tslint": "^5.12.1",
     "typescript": "^3.3.3"
