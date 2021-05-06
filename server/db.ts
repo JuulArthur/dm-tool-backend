@@ -2,8 +2,6 @@ const { Pool } = require('pg');
 import { parse } from 'pg-connection-string';
 const {config} = require('./config')
 
-console.log('config.db', config);
-console.log('config.db', config.db);
 const pool = new Pool(parse(config.db));
 
 pool.on('error', (e: any, client: any) => {
