@@ -7,6 +7,7 @@ import cors from 'cors';
 
 const locationRoutes = require('./location/location');
 const characterRoutes = require('./character/character');
+const chapterRoutes = require('./chapter/chapter');
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/location', locationRoutes);
 app.use('/character', characterRoutes);
+app.use('/chapter', chapterRoutes);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
