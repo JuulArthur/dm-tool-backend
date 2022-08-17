@@ -107,9 +107,12 @@ router.get('/:id', async (req, res, next) => {
 
 router.patch('/:id', async (req, res, next) => {
     try {
-        const chapterUpdates = { id: req.params.id, ...req.body };
-        const chapterResult = await dbUpdateRecord('chapter', mapChapterToDB(chapterUpdates));
-        return res.status(200).json(mapChapterToFrontend(chapterResult));
+        const chapterId = req.params.id;
+        const chapterUpdates = { id: chapterId, ...req.body };
+        await dbUpdateRecord('chapter', mapChapterToDB(chapterUpdates));
+
+        const updatedChapter = await getChapterWithAdditionalData({ id: chapterId });
+        return res.status(200).json(mapChapterToFrontend(updatedChapter));
     } catch (e) {
         console.log('Failed to update chapter', e);
         return res.status(500).json(e);
