@@ -1,13 +1,12 @@
 const { Pool } = require('pg');
 import { parse } from 'pg-connection-string';
-const {config} = require('./config')
+const { config } = require('./config');
 
 const pool = new Pool(parse(config.db));
 
 pool.on('error', (e: any, client: any) => {
     console.log(client, 'Something went wrong with the db connection', { err: e });
 });
-
 
 export async function dbExecuteAsyncQuery(query: string, params?: Array<any>) {
     const result = await pool.query(query, params);
@@ -20,10 +19,12 @@ function generateSqlColumnNameAndPlaceholderPairs(paramObject: Array<any>) {
         .slice(0, -1);
 }
 
-
 function generateSqlVariablePlaceholders(keys: Array<any>) {
     return keys
-        .reduce((accumulated: string, column: any, placeholderId: number) => `${accumulated} $${placeholderId + 1},`, '')
+        .reduce(
+            (accumulated: string, column: any, placeholderId: number) => `${accumulated} $${placeholderId + 1},`,
+            ''
+        )
         .slice(0, -1);
 }
 
@@ -57,7 +58,7 @@ export function dbUpdateRecord(table: string, paramObject: any) {
     return dbExecuteAsyncQuery(query, values).then((res) => res[0]);
 }
 
-export function dbFindId(table: string, id: number) {
+export function dbFindId(table: string, id: string) {
     return dbExecuteAsyncQuery(`SELECT * FROM ${table} WHERE id = $1`, [id]).then((res) => res[0]);
 }
 
