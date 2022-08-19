@@ -19,6 +19,13 @@ const mapLocationToFrontend = (location: any) => ({
     originalContent: location.original_content,
 });
 
+const mapLocationToChapterToFrontend = (locationToChapter: any) => ({
+    id: locationToChapter.id,
+    locationId: locationToChapter.location_id,
+    chapterId: locationToChapter.chapter_id,
+    order: locationToChapter.order_id,
+});
+
 const createLocationToChapterForLocation = async ({
     chapterId,
     locationId,
@@ -61,14 +68,30 @@ router.post('/', async (req: any, res: any) => {
         const data = req.body;
         const mappedData = mapLocationToBackend(data);
         delete mappedData.id;
-        const result = await dbCreateRecord('location', mappedData);
+        const location = await dbCreateRecord('location', mappedData);
+        let locationToChapter;
         if (data.chapterId) {
-            await createLocationToChapterForLocation({ chapterId: data.chapterId, locationId: result.id });
+            locationToChapter = await createLocationToChapterForLocation({
+                chapterId: data.chapterId,
+                locationId: location.id,
+            });
         }
-        return res.status(200).json(result);
+        return res.status(200).json({
+            location: mapLocationToFrontend(location),
+            locationToChapterReference: mapLocationToChapterToFrontend(locationToChapter),
+        });
     } catch (e) {
         console.log('e', e);
         return res.status(500).json({ error: 'Something went wrong' });
+    }
+});
+
+router.get('/location-to-chapter-reference/all', async (req, res, next) => {
+    try {
+        const locations = await dbExecuteAsyncQuery('SELECT * FROM location_to_chapter');
+        return res.status(200).json(locations.map(mapLocationToChapterToFrontend));
+    } catch (e) {
+        return res.status(500).json(e);
     }
 });
 
