@@ -1,7 +1,16 @@
 import express from 'express';
-import { dbCreateRecord, dbExecuteAsyncQuery } from '../db';
+import { dbCreateRecord, dbExecuteAsyncQuery, dbUpdateRecord } from '../db';
+import _ from 'lodash';
 
 const router = express.Router();
+
+interface LocationInterface {
+    id: string;
+    name?: string;
+    description?: string;
+    info?: string;
+    original_content?: string;
+}
 
 const mapLocationToBackend = (location: any) => ({
     id: location.id,
@@ -10,6 +19,14 @@ const mapLocationToBackend = (location: any) => ({
     info: location.info,
     original_content: location.originalContent,
 });
+
+const mapLocationToDb = (location: any) => {
+    const mappedObject: LocationInterface = _.pick(location, ['id', 'name', 'description', 'info']);
+    if (location.originalContent) {
+        mappedObject['original_content'] = location.originalContent;
+    }
+    return mappedObject;
+};
 
 const mapLocationToFrontend = (location: any) => ({
     id: location.id,
@@ -63,6 +80,20 @@ router.get('/:id', async (req, res, next) => {
     }
 });
 
+router.patch('/:id', async (req, res, next) => {
+    const { name, description, info, originalContent } = req.body;
+    try {
+        const location = await dbUpdateRecord(
+            'location',
+            mapLocationToDb({ id: req.params.id, name, description, info, originalContent })
+        );
+        return res.status(200).json(mapLocationToFrontend(location));
+    } catch (e) {
+        console.log('e', e);
+        return res.status(500).json(e);
+    }
+});
+
 router.post('/', async (req: any, res: any) => {
     try {
         const data = req.body;
@@ -78,7 +109,7 @@ router.post('/', async (req: any, res: any) => {
         }
         return res.status(200).json({
             location: mapLocationToFrontend(location),
-            locationToChapterReference: mapLocationToChapterToFrontend(locationToChapter),
+            locationToChapterReference: locationToChapter && mapLocationToChapterToFrontend(locationToChapter),
         });
     } catch (e) {
         console.log('e', e);
