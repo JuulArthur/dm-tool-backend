@@ -1,6 +1,7 @@
 import express from 'express';
 import { dbCreateRecord, dbExecuteAsyncQuery, dbUpdateRecord } from '../db';
 import _ from 'lodash';
+import { mapObjectWithOnlyFieldsContainingValue } from '../utils';
 
 const router = express.Router();
 
@@ -21,7 +22,10 @@ const mapLocationToBackend = (location: any) => ({
 });
 
 const mapLocationToDb = (location: any) => {
-    const mappedObject: LocationInterface = _.pick(location, ['id', 'name', 'description', 'info']);
+    const mappedObject: LocationInterface = {
+        id: location.id,
+        ...mapObjectWithOnlyFieldsContainingValue(location, ['id', 'name', 'description', 'info']),
+    };
     if (location.originalContent) {
         mappedObject['original_content'] = location.originalContent;
     }
